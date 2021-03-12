@@ -25,7 +25,7 @@ public class LatencyMeasurer
         final LatencyMeasurer latencyMeasurer = new LatencyMeasurer();
         final CommandLine commandLine = new CommandLine(latencyMeasurer);
         commandLine.parse(args);
-        final Thread thread = new Thread(latencyMeasurer);
+        final Thread thread = new Thread(latencyMeasurer, "latencyMeasurer");
         thread.setDaemon(true);
         thread.start();
         new ShutdownSignalBarrier().await();
