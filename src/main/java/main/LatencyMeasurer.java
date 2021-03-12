@@ -2,6 +2,7 @@ package main;
 
 import net.openhft.affinity.AffinityLock;
 import net.openhft.affinity.AffinitySupport;
+import org.agrona.concurrent.ShutdownSignalBarrier;
 import picocli.CommandLine;
 
 import java.io.BufferedReader;
@@ -10,6 +11,7 @@ import java.io.InputStreamReader;
 import java.time.Instant;
 
 public class LatencyMeasurer
+    implements Runnable
 {
     @CommandLine.Option(names = {"--warmupCycles"}, description = "Number of warmup cycles")
     private int warmupCycles = 20_000;
@@ -26,10 +28,14 @@ public class LatencyMeasurer
         final LatencyMeasurer latencyMeasurer = new LatencyMeasurer();
         final CommandLine commandLine = new CommandLine(latencyMeasurer);
         commandLine.parse(args);
-        latencyMeasurer.run();
+        final Thread thread = new Thread(latencyMeasurer);
+        thread.setDaemon(true);
+        thread.start();
+        new ShutdownSignalBarrier().await();
     }
 
-    private void run()
+    @Override
+    public void run()
     {
         final Thread thread = Thread.currentThread();
         final int threadId = AffinitySupport.getThreadId();
