@@ -7,6 +7,7 @@ import picocli.CommandLine;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
+import java.time.Instant;
 
 public class LatencyMeasurer
 {
@@ -64,7 +65,7 @@ public class LatencyMeasurer
         long latency = end - start;
         if (latency > thresholdNs) {
             final String ctxtSwitches = checkCtxSwitches(threadId);
-            System.out.println(String.format("\n\n Latency is greater than treshold: %d", latency));
+            System.out.println(String.format("\n\n %s Latency is greater than treshold: %d", Instant.now(), latency));
             System.out.println(ctxtSwitches);
         }
     }
