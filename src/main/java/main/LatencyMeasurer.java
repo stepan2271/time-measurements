@@ -15,7 +15,7 @@ public class LatencyMeasurer
 
     @CommandLine.Option(names = {"--thresholdNs"}, description = "Threshold in nanoseconds. When latency is above " +
             "this threshold we will print this event")
-    private long thresholdNs = 100_000;
+    private long thresholdNs = 500_000;
 
     @CommandLine.Option(names = {"--bindingCpu"}, description = "Binding cpu")
     private int bindingCpu = -1;
