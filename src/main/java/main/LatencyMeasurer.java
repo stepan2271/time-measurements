@@ -13,6 +13,8 @@ import java.time.Instant;
 public class LatencyMeasurer
     implements Runnable
 {
+    private static final Boolean CTXT_SWITCH_LOGGING_ENABLED = Boolean.getBoolean("ctxtSwitchLog");
+
     @CommandLine.Option(names = {"--warmupCycles"}, description = "Number of warmup cycles")
     private int warmupCycles = 20_000;
 
@@ -53,12 +55,10 @@ public class LatencyMeasurer
                     threadId,
                     affinityLock.cpuId());
         }
-        System.out.println(checkCtxSwitches(threadId));
         for (int i = 0; i < warmupCycles; i++) {
             measureLatency(Long.MAX_VALUE, threadId);
         }
         System.out.println("Warmup finished");
-        System.out.println(checkCtxSwitches(threadId));
         while (true) {
             measureLatency(thresholdNs, threadId);
         }
@@ -70,9 +70,10 @@ public class LatencyMeasurer
         long end = System.nanoTime();
         long latency = end - start;
         if (latency > thresholdNs) {
-            final String ctxtSwitches = checkCtxSwitches(threadId);
             System.out.println(String.format("\n\n %s Latency is greater than treshold: %d", Instant.now(), latency));
-            System.out.println(ctxtSwitches);
+            if (CTXT_SWITCH_LOGGING_ENABLED) {
+                System.out.println(checkCtxSwitches(threadId));
+            }
         }
     }
 
@@ -85,8 +86,7 @@ public class LatencyMeasurer
 
             final Process process = processBuilder.start();
 
-            final BufferedReader reader =
-                    new BufferedReader(new InputStreamReader(process.getInputStream()));
+            final BufferedReader reader = new BufferedReader(new InputStreamReader(process.getInputStream()));
 
             String line;
             while ((line = reader.readLine()) != null) {
