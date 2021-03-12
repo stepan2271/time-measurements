@@ -11,7 +11,7 @@ import java.io.InputStreamReader;
 public class LatencyMeasurer
 {
     @CommandLine.Option(names = {"--warmupCycles"}, description = "Number of warmup cycles")
-    private int warmupCycles = 10_000;
+    private int warmupCycles = 20_000;
 
     @CommandLine.Option(names = {"--thresholdNs"}, description = "Threshold in nanoseconds. When latency is above " +
             "this threshold we will print this event")
