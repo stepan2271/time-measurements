@@ -11,6 +11,20 @@ dependencies {
     compile group: 'net.openhft', name: 'affinity', version: '3.2.3'
 }
 
+
+
 repositories {
     mavenCentral()
+}
+
+shadowJar.classifier = null
+shadowJar.version = null
+shadowJar {
+    classifier = null
+    version = null
+
+    manifest {
+        attributes 'Main-Class': "LatencyMeasurer"
+        attributes 'Implementation-Version': "${this.version}"
+    }
 }
