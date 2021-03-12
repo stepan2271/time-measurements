@@ -65,7 +65,7 @@ public class LatencyMeasurer
         long end = System.nanoTime();
         long latency = end - start;
         if (latency > thresholdNs) {
-            System.out.println(String.format("\n\n %s Latency is greater than treshold: %d", Instant.now(), latency));
+            System.out.println(String.format("\n\n %s Latency is greater than treshold: %dns", Instant.now(), latency));
         }
     }
 }
