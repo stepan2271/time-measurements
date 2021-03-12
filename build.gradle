@@ -24,7 +24,7 @@ shadowJar {
     version = null
 
     manifest {
-        attributes 'Main-Class': "LatencyMeasurer"
+        attributes 'Main-Class': "main.LatencyMeasurer"
         attributes 'Implementation-Version': "${this.version}"
     }
 }
