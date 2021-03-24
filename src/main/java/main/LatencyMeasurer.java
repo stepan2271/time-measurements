@@ -20,11 +20,20 @@ public class LatencyMeasurer
     @CommandLine.Option(names = {"--bindingCpu"}, description = "Binding cpu")
     private int bindingCpu = -1;
 
+    @CommandLine.Option(names = {"--otherTimeThreads"}, description = "Number of other threads which will periodically " +
+            "call System.nanoTime() method")
+    private long otherTimeThreads = 5;
+
+
     public static void main(String[] args)
     {
         final LatencyMeasurer latencyMeasurer = new LatencyMeasurer();
         final CommandLine commandLine = new CommandLine(latencyMeasurer);
         commandLine.parse(args);
+        for (int i = 0; i < latencyMeasurer.otherTimeThreads; i++)
+        {
+            startSystemNanotimeRequestingThread();
+        }
         final Thread thread = new Thread(latencyMeasurer, "latencyMeasurer");
         thread.setDaemon(true);
         thread.start();
@@ -56,6 +65,27 @@ public class LatencyMeasurer
         System.out.println("\nWarmup finished " + Instant.now());
         while (true) {
             measureLatency(thresholdNs);
+        }
+    }
+
+    private static void startSystemNanotimeRequestingThread()
+    {
+        final Thread thread = new Thread(LatencyMeasurer::requestSystemNanoTimeInALoop);
+        thread.setDaemon(true);
+        thread.start();
+        System.out.println(String.format("New thread %s requesting System.nanoTime() has started", thread.getName()));
+    }
+
+    private static void requestSystemNanoTimeInALoop()
+    {
+        while (true)
+        {
+            System.nanoTime();
+            try {
+                Thread.sleep((long) 25);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
         }
     }
 
